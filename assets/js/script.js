@@ -78,17 +78,31 @@ function displayBooks() {
 
     const infoLink = book.volumeInfo.infoLink || "#";
 
+    let formattedDate;
+
+    if (publishDate !== "Unknown Date") {
+      const date = new Date(publishDate);
+      const options = { year: "numeric", month: "short", day: "numeric" };
+      formattedDate = date.toLocaleDateString("en-US", options);
+    }
+
     div.innerHTML = `
-      <a href="${infoLink}" target="_blank" class="book-link">
-    <img src="${thumbnail}" alt="${title}">
-    <div class="book-info">
-      <h3>${title}</h3>
-      <p class="author"><strong>Authors:</strong> ${authors}</p>
-      <p><strong>Publisher:</strong> ${publisher}</p>
-      <p><strong>Published:</strong> ${publishDate}</p>
-    </div>
-  </a>
-      </div>
+    <a href="${infoLink}" target="_blank" class="book-link">
+          <div class="book-card">
+          <div class="img-box"> 
+            <img src="${thumbnail}" alt="${title}" />
+            </div>
+            <div class="book-info">
+              <h3>${title}</h3>
+              <p class="author">by ${authors}</p>
+             
+              <div class="publish">
+                <p>Publish By : ${publisher}</p>
+                <p> ${formattedDate}</p>
+              </div>
+            </div>
+          </div>
+        </a>
     `;
     bookList.appendChild(div);
   });
@@ -119,10 +133,16 @@ nextButton.addEventListener("click", () => {
 });
 
 // Filter books by title or author
+
+let searchTimeout;
 searchInput.addEventListener("input", (e) => {
+  clearTimeout(searchTimeout);
   const query = e.target.value.trim();
-  currentPage = 1; // Reset to the first page when searching
-  fetchAllBooks(query);
+
+  searchTimeout = setTimeout(() => {
+    currentPage = 1;
+    fetchAllBooks(query);
+  }, 500);
 });
 
 // Sort books when sort option is changed
