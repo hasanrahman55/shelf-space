@@ -1,12 +1,17 @@
 const bookList = document.querySelector(".book-list");
+const prevButton = document.getElementById("prev");
+const nextButton = document.getElementById("next");
+const pageInfo = document.getElementById("page-info");
+const searchInput = document.getElementById("searchInput");
+const sortSelect = document.getElementById("sortSelect");
 
 let currentPage = 1;
-let totalPages = 1;
-let totalItem = 0;
-let currentItem = 0;
+const booksPerPage = 10; // Number of books per page
+let allBooks = []; // Store all books fetched
 
-async function getBookList() {
-  const url = "https://api.freeapi.app/api/v1/public/books";
+// Fetch all books and store them
+async function fetchAllBooks(query = "") {
+  const url = `https://api.freeapi.app/api/v1/public/books?limit=1000&query=${query}`;
   const options = {
     method: "GET",
     headers: {
@@ -19,26 +24,49 @@ async function getBookList() {
     if (!response.ok) throw new Error("Error fetching books");
     const data = await response.json();
 
-    displayBooks(data.data.data);
+    allBooks = data.data.data; // Store all books globally
+    totalPages = Math.ceil(allBooks.length / booksPerPage); // Calculate total pages
 
-    totalPages = data.data.totalPages;
-    currentPage = data.data.page;
-
+    sortAndDisplayBooks(); // Sort and display the first page
   } catch (error) {
     console.error(error);
   }
 }
 
-function displayBooks(books) {
-  // Clear previous books before displaying new ones
-  bookList.innerHTML = "";
+// Sort books and display the current page
+function sortAndDisplayBooks() {
+  const sortBy = sortSelect.value;
 
-  books.forEach((book) => {
+  if (sortBy === "title") {
+    allBooks.sort((a, b) => {
+      const titleA = a.volumeInfo.title?.toLowerCase() || "";
+      const titleB = b.volumeInfo.title?.toLowerCase() || "";
+      return titleA.localeCompare(titleB);
+    });
+  } else if (sortBy === "dateOfRelease") {
+    allBooks.sort((a, b) => {
+      const dateA = new Date(a.volumeInfo.publishedDate || "9999-12-31");
+      const dateB = new Date(b.volumeInfo.publishedDate || "9999-12-31");
+      return dateA - dateB;
+    });
+  }
+
+  displayBooks(); // Display the sorted books for the current page
+}
+
+// Display books for the current page
+function displayBooks() {
+  bookList.innerHTML = ""; // Clear previous books
+
+  const start = (currentPage - 1) * booksPerPage;
+  const end = start + booksPerPage;
+  const booksToDisplay = allBooks.slice(start, end); // Get books for the current page
+
+  booksToDisplay.forEach((book) => {
     const div = document.createElement("div");
     div.className = "card-container";
 
     const title = book.volumeInfo.title || "No Title Available";
-    const subtitle = book.volumeInfo.subtitle || "No subtitle Available";
     const authors = book.volumeInfo.authors
       ? book.volumeInfo.authors.join(", ")
       : "Unknown Author";
@@ -48,18 +76,73 @@ function displayBooks(books) {
       ? book.volumeInfo.imageLinks.thumbnail
       : "";
 
+    const infoLink = book.volumeInfo.infoLink || "#";
+
     div.innerHTML = `
-      <img src="${thumbnail}" alt="${title}">
-      <div class="book-info">
-        <h3>${title}</h3>
-        <p class="author"><strong>Authors:</strong> ${authors}</p>
-        <p class="description"><strong>Description:</strong> ${subtitle}</p>
-        <p><strong>Publisher:</strong> ${publisher}</p>
-        <p><strong>Published:</strong> ${publishDate}</p>
+      <a href="${infoLink}" target="_blank" class="book-link">
+    <img src="${thumbnail}" alt="${title}">
+    <div class="book-info">
+      <h3>${title}</h3>
+      <p class="author"><strong>Authors:</strong> ${authors}</p>
+      <p><strong>Publisher:</strong> ${publisher}</p>
+      <p><strong>Published:</strong> ${publishDate}</p>
+    </div>
+  </a>
       </div>
     `;
-    bookList.appendChild(div); 
+    bookList.appendChild(div);
   });
+
+  updatePagination(); // Update the pagination UI
 }
 
-getBookList();
+// Update pagination UI
+function updatePagination() {
+  pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+  prevButton.disabled = currentPage === 1;
+  nextButton.disabled = currentPage === totalPages;
+}
+
+// Event listeners for pagination buttons
+prevButton.addEventListener("click", () => {
+  if (currentPage > 1) {
+    currentPage--;
+    displayBooks(); // Display the previous page
+  }
+});
+
+nextButton.addEventListener("click", () => {
+  if (currentPage < totalPages) {
+    currentPage++;
+    displayBooks(); // Display the next page
+  }
+});
+
+// Filter books by title or author
+searchInput.addEventListener("input", (e) => {
+  const query = e.target.value.trim();
+  currentPage = 1; // Reset to the first page when searching
+  fetchAllBooks(query);
+});
+
+// Sort books when sort option is changed
+sortSelect.addEventListener("change", () => {
+  sortAndDisplayBooks(); // Sort and update the current page
+});
+
+// Fetch books when the page loads
+fetchAllBooks();
+
+// Toggle view/list
+const toggleViewButton = document.getElementById("toggleView");
+
+toggleViewButton.addEventListener("click", () => {
+  bookList.classList.toggle("list-view"); // Toggle class
+
+  // Change button text based on view
+  if (bookList.classList.contains("list-view")) {
+    toggleViewButton.textContent = "Switch to Grid View";
+  } else {
+    toggleViewButton.textContent = "Switch to List View";
+  }
+});

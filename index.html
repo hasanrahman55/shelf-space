@@ -13,14 +13,22 @@
       </header>
 
       <div class="filter-section">
-        <input type="text" id="search" placeholder="Search books..." />
-        <select id="sort">
+        <input type="text" id="searchInput" placeholder="Search books..." />
+        <button id="toggleView">Switch to List View</button>
+
+        <select id="sortSelect">
           <option value="title">Sort by Title</option>
           <option value="dateOfRelease">Sort by Date of Release</option>
         </select>
       </div>
 
       <div class="book-list"></div>
+
+      <div id="pagination">
+        <button id="prev" disabled>Previous</button>
+        <span id="page-info">Page 1</span>
+        <button id="next">Next</button>
+      </div>
     </div>
 
     <script src="assets/js/script.js"></script>
