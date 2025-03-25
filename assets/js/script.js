@@ -161,8 +161,8 @@ toggleViewButton.addEventListener("click", () => {
 
   // Change button text based on view
   if (bookList.classList.contains("list-view")) {
-    toggleViewButton.textContent = "Switch to Grid View";
+    toggleViewButton.innerHTML = `<i class="ph ph-squares-four"></i>`;
   } else {
-    toggleViewButton.textContent = "Switch to List View";
+    toggleViewButton.innerHTML = `<i class="ph ph-list"></i>`;
   }
 });

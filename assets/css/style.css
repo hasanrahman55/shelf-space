@@ -127,12 +127,9 @@ h1 {
 }
 
 .filter-section button {
-  background: linear-gradient(135deg, #ff7b54 0%, #ff5733 100%);
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  box-shadow: 0 4px 10px rgba(255, 123, 84, 0.3);
+  width: 100px;
+  /* background: linear-gradient(135deg, #ff5733 0%, #ff3c1a 100%); */
 }
-
 .filter-section button:hover {
   background: linear-gradient(135deg, #ff5733 0%, #ff3c1a 100%);
   transform: translateY(-2px);
