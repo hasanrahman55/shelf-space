@@ -128,7 +128,6 @@ h1 {
 
 .filter-section button {
   width: 100px;
-  /* background: linear-gradient(135deg, #ff5733 0%, #ff3c1a 100%); */
 }
 .filter-section button:hover {
   background: linear-gradient(135deg, #ff5733 0%, #ff3c1a 100%);
@@ -148,11 +147,10 @@ h1 {
 .book-card {
   display: flex;
   flex-direction: column;
-  /* background: rgba(255, 255, 255, 0.05); */
   border-radius: 12px;
   overflow: hidden;
   transition: all 0.3s ease;
-  /* box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); */
+  
 }
 
 .book-card:hover {
@@ -317,7 +315,7 @@ h1 {
   }
 
   .filter-section input {
-    max-height: 50px; /* Prevents it from increasing too much */
+    max-height: 50px; 
   }
   .book-list {
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));

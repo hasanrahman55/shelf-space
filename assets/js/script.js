@@ -155,7 +155,6 @@ fetchAllBooks();
 
 // Toggle view/list
 const toggleViewButton = document.getElementById("toggleView");
-
 toggleViewButton.addEventListener("click", () => {
   bookList.classList.toggle("list-view"); // Toggle class
 
