@@ -316,6 +316,9 @@ h1 {
     width: 100%;
   }
 
+  .filter-section input {
+    max-height: 50px; /* Prevents it from increasing too much */
+  }
   .book-list {
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   }
